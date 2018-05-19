@@ -5,8 +5,7 @@ import LoginPage from './Login';
 
 const $ = require('jquery');
 
-
-const userList = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve'];
+const userList = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve', 'Issac', 'Justin', 'Mallory', 'Oscar', 'Pat'];
 
 class App extends React.Component {
   constructor(props) {
@@ -21,7 +20,9 @@ class App extends React.Component {
     const loadMessage = (data) => {
       this.setState({ chatLog: [...this.state.chatLog, data] });
       if (data.from !== this.state.user && data.from !== this.state.msgTo) {
-        this.setState({ newMsg: [...this.state.newMsg, data.from] });
+        if (this.state.newMsg.indexOf(data.from) < 0) {
+          this.setState({ newMsg: [...this.state.newMsg, data.from] });
+        }
       }
     };
 
@@ -37,7 +38,7 @@ class App extends React.Component {
         user: data.usr,
         login: true,
       });
-      document.title = data.usr;
+      document.title = `Messenger - ${ data.usr}`;
     });
 
 
@@ -47,7 +48,6 @@ class App extends React.Component {
   }
 
   handleSubmit(event) {
-    // alert('User ' + this.state.user + ' login...');
     this.setState({ login: true });
     this.socket.emit('LOGIN');
     event.preventDefault();
@@ -58,12 +58,11 @@ class App extends React.Component {
     if (this.state.newMsg.includes(event.target.name)) {
       const index = this.state.newMsg.indexOf(event.target.name);
       if (index !== -1) {
-        this.state.newMsg.splice(index, 1)
-        this.setState({ newMsg: this.state.newMsg});
+        this.state.newMsg.splice(index, 1);
+        this.setState({ newMsg: this.state.newMsg });
       }
     }
-    $(".chat-log").stop().animate({ scrollTop: $(".chat-log")[0].scrollHeight}, 1000);
-    
+    $('.chat-log').animate({ scrollTop: this.state.chatLog.length * 50 }, 200);
   }
 
   sendMessage(ev) {
@@ -75,7 +74,7 @@ class App extends React.Component {
         message: this.state.message,
       });
       this.setState({ message: '' });
-      $(".chat-log").stop().animate({ scrollTop: $(".chat-log")[0].scrollHeight}, 1000);
+      $('.chat-log').animate({ scrollTop: $('.chat-log')[0].scrollHeight }, 1000);
     }
   }
 
@@ -87,40 +86,47 @@ class App extends React.Component {
           if (userList[i] === this.state.msgTo) {
             contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-secondary btn-lg btn-contact btn-block">{userList[i]}</button>);
           } else if (this.state.newMsg.includes(userList[i])) {
-            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-outline-danger btn-lg btn-contact btn-block">{userList[i]}</button>);
+            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-danger btn-lg btn-contact btn-block">{userList[i]}</button>);
           } else {
             contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-outline-secondary btn-lg btn-contact btn-block">{userList[i]}</button>);
           }
         }
       }
-      const _log = [];
+      const chatLog = [];
       for (let i = 0; i < this.state.chatLog.length; i++) {
         if (this.state.chatLog[i].from === this.state.user && this.state.chatLog[i].to === this.state.msgTo) {
-          _log.push(<div className="Message-to">{this.state.chatLog[i].message}</div>);
+          chatLog.push(<div className="Message-to"><span className="Message-to-box">{this.state.chatLog[i].message}</span></div>);
         } else if (this.state.chatLog[i].from === this.state.msgTo && this.state.chatLog[i].to === this.state.user) {
-          _log.push(<div className="Message-from">{this.state.chatLog[i].message}</div>)
+          chatLog.push(<div className="Message-from"><span className="Message-from-box">{this.state.chatLog[i].message}</span></div>);
         }
       }
-      
+
+      let badge = (<span className="badge badge-success">0</span>);
+      if (this.state.newMsg.length > 0) {
+        badge = (<span className="badge badge-danger">{this.state.newMsg.length}</span>);
+      }
+
       return (
         <div className="container">
           <div className="row section1">
-            <div className="col-4 icon" />
-            <div className="col-8">
+            <div className="col-3 icon">
+              <h1>{badge}</h1>
+            </div>
+            <div className="col-9">
               <h1>{this.state.msgTo}</h1>
             </div>
           </div>
           <div className="row section2">
-            <div className="col-4 contact-list">
+            <div className="col-3 contact-list">
               <br />
               <div className="btn-group-vertical btn-block">
                 {contactList}
               </div>
             </div>
-            <div className="col-8">
+            <div className="col-9">
               <div className="row">
                 <div className="col-12 chat-log">
-                  {_log}
+                  {chatLog}
                 </div>
               </div>
               <div className="row bottom input-group">

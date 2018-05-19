@@ -44,6 +44,8 @@
 
 .contact-list {
   border-right: 3px solid gray;
+  overflow-y: scroll;
+  height: calc(100vh - 100px);
 }
 
 .btn-contact {
@@ -52,16 +54,32 @@
 }
 
 .Message-to {
-  
+  margin-bottom: 20px;
   text-align: right;
   color: lightblue;
 }
 
+.Message-to-box {
+  display: inline-block;
+  border: solid 2px lightblue;
+  border-radius: 10px;
+  padding: 3px 6px;
+  word-wrap: break-word;
+}
+
 .Message-from {
-  
+  margin-bottom: 20px;
   text-align: left;
   color: lightpink;
-  font-size: 
+}
+
+.Message-from-box {
+  display: inline-block;
+  word-wrap: break-word;
+  border: solid 2px lightpink;
+  border-radius: 10px;
+  padding: 3px 6px;
+  word-wrap: break-word;
 }
 
 .chat-log {
@@ -70,13 +88,17 @@
   overflow-y: scroll;
   display: block;
   font-size: 22px;
-  word-wrap: break-word;
+  padding: 0px 10px;
 }
 .input {
   word-wrap: break-word;
 }
 
 .input-group {
-  width: 100%;
-  margin: 0 auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.btn:active::focus {
+  outline: 0px;
 }
