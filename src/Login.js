@@ -24,6 +24,7 @@ class LoginPage extends React.Component {
         <button onClick={this.handleOnClick} name="Bob" className="btn btn-outline-secondary btn-lg btn-block">Bob</button>
         <button onClick={this.handleOnClick} name="Carol" className="btn btn-outline-secondary btn-lg btn-block">Carol</button>
         <button onClick={this.handleOnClick} name="Dave" className="btn btn-outline-secondary btn-lg btn-block">Dave</button>
+        <button onClick={this.handleOnClick} name="Eve" className="btn btn-outline-secondary btn-lg btn-block">Eve</button>        
         <br />
         <p style={footerStyles}>-Messenger-App-</p>
       </div>

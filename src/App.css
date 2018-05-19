@@ -27,17 +27,56 @@
   to { transform: rotate(360deg); }
 }
 
+.section1 {
+  height: 60px;
+  border-bottom: 3px solid gray;
+}
+.section2 {
+  height: calc(100vh - 100px);
+}
 .bottom {
   position: absolute;
   bottom: 0;
+}
+.icon {
+  border-right: 3px solid gray;
+}
+
+.contact-list {
+  border-right: 3px solid gray;
 }
 
 .btn-contact {
   padding-top: 20px;
   padding-bottom: 20px;
 }
-textarea {
-  width: 100%;
-  resize: none;
+
+.Message-to {
+  
+  text-align: right;
+  color: lightblue;
+}
+
+.Message-from {
+  
+  text-align: left;
+  color: lightpink;
+  font-size: 
+}
+
+.chat-log {
+  height: calc(100vh - 160px);
+  position: absolute;
   overflow-y: scroll;
+  display: block;
+  font-size: 22px;
+  word-wrap: break-word;
+}
+.input {
+  word-wrap: break-word;
+}
+
+.input-group {
+  width: 100%;
+  margin: 0 auto;
 }

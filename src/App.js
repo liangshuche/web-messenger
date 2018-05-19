@@ -3,8 +3,10 @@ import io from 'socket.io-client';
 import './App.css';
 import LoginPage from './Login';
 
+const $ = require('jquery');
 
-const userList = ['Alice', 'Bob', 'Carol', 'Dave'];
+
+const userList = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve'];
 
 class App extends React.Component {
   constructor(props) {
@@ -14,7 +16,6 @@ class App extends React.Component {
       login: false,
       msgTo: 'Messenger',
       message: '',
-      log: '',
       newMsg: '',
     };
     const loadMessage = (data) => {
@@ -36,6 +37,7 @@ class App extends React.Component {
         user: data.usr,
         login: true,
       });
+      document.title = data.usr;
     });
 
 
@@ -60,17 +62,20 @@ class App extends React.Component {
         this.setState({ newMsg: this.state.newMsg});
       }
     }
+    $(".chat-log").stop().animate({ scrollTop: $(".chat-log")[0].scrollHeight}, 1000);
+    
   }
 
   sendMessage(ev) {
     ev.preventDefault();
-    if (this.message !== '' && this.msgTo !== 'Messenger') {
+    if (this.state.message !== '' && this.state.msgTo !== 'Messenger') {
       this.socket.emit('SEND_MESSAGE', {
         from: this.state.user,
         to: this.state.msgTo,
         message: this.state.message,
       });
       this.setState({ message: '' });
+      $(".chat-log").stop().animate({ scrollTop: $(".chat-log")[0].scrollHeight}, 1000);
     }
   }
 
@@ -91,31 +96,35 @@ class App extends React.Component {
       const _log = [];
       for (let i = 0; i < this.state.chatLog.length; i++) {
         if (this.state.chatLog[i].from === this.state.user && this.state.chatLog[i].to === this.state.msgTo) {
-          _log.push(<p>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</p>);
+          _log.push(<div className="Message-to">{this.state.chatLog[i].message}</div>);
         } else if (this.state.chatLog[i].from === this.state.msgTo && this.state.chatLog[i].to === this.state.user) {
-          _log.push(<p>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</p>);
+          _log.push(<div className="Message-from">{this.state.chatLog[i].message}</div>)
         }
       }
+      
       return (
         <div className="container">
-          <div className="row">
-            <div className="col-4" />
+          <div className="row section1">
+            <div className="col-4 icon" />
             <div className="col-8">
               <h1>{this.state.msgTo}</h1>
             </div>
           </div>
-          <div className="row">
-            <div className="col-4">
+          <div className="row section2">
+            <div className="col-4 contact-list">
+              <br />
               <div className="btn-group-vertical btn-block">
                 {contactList}
               </div>
             </div>
-            <div className="col-8 main ">
+            <div className="col-8">
               <div className="row">
-                {_log}
+                <div className="col-12 chat-log">
+                  {_log}
+                </div>
               </div>
               <div className="row bottom input-group">
-                <input type="text" className="form-control" palceholder="Enter Message..." value={this.state.message} onChange={ev => this.setState({ message: ev.target.value })} />
+                <input type="text" className="form-control input" palceholder="Enter Message..." value={this.state.message} onChange={ev => this.setState({ message: ev.target.value })} />
                 <div className="input-group-append">
                   <button className="btn btn-outline-secondary" type="button" onClick={this.sendMessage}>Send</button>
                 </div>
