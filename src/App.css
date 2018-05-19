@@ -37,6 +37,8 @@
 .bottom {
   position: absolute;
   bottom: 0;
+  width: 100%;
+  padding: 0px 10px;
 }
 .icon {
   border-right: 3px solid gray;
@@ -88,9 +90,12 @@
   overflow-y: scroll;
   display: block;
   font-size: 22px;
-  padding: 0px 10px;
+  padding: 20px 10px 0px 10px;
 }
-.input {
+.input-box {
+  font-size: 22px;
+  height: 45px;
+  resize: none;
   word-wrap: break-word;
 }
 

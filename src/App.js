@@ -38,44 +38,57 @@ class App extends React.Component {
         user: data.usr,
         login: true,
       });
-      document.title = `Messenger - ${ data.usr}`;
+      document.title = `Messenger - ${data.usr}`;
     });
 
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleOnClick = this.handleOnClick.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+    this.autoGrow = this.autoGrow.bind(this);
   }
 
-  handleSubmit(event) {
+  handleSubmit(ev) {
     this.setState({ login: true });
     this.socket.emit('LOGIN');
-    event.preventDefault();
+    ev.preventDefault();
   }
 
-  handleOnClick(event) {
-    this.setState({ msgTo: event.target.name });
-    if (this.state.newMsg.includes(event.target.name)) {
-      const index = this.state.newMsg.indexOf(event.target.name);
+  handleOnClick(ev) {
+    this.setState({ msgTo: ev.target.name });
+    if (this.state.newMsg.includes(ev.target.name)) {
+      const index = this.state.newMsg.indexOf(ev.target.name);
       if (index !== -1) {
         this.state.newMsg.splice(index, 1);
         this.setState({ newMsg: this.state.newMsg });
       }
     }
-    $('.chat-log').animate({ scrollTop: this.state.chatLog.length * 50 }, 200);
+    $('.chat-log').animate({ scrollTop: this.state.chatLog.length * 80 }, 200);
   }
 
   sendMessage(ev) {
     ev.preventDefault();
-    if (this.state.message !== '' && this.state.msgTo !== 'Messenger') {
-      this.socket.emit('SEND_MESSAGE', {
-        from: this.state.user,
-        to: this.state.msgTo,
-        message: this.state.message,
-      });
+    if (ev.keyCode === 13) {
       this.setState({ message: '' });
-      $('.chat-log').animate({ scrollTop: $('.chat-log')[0].scrollHeight }, 1000);
+      if (this.state.message !== '\n' && this.state.msgTo !== 'Messenger') {
+        this.socket.emit('SEND_MESSAGE', {
+          from: this.state.user,
+          to: this.state.msgTo,
+          message: this.state.message,
+        });
+        this.setState({ message: '' });
+        $('.chat-log').animate({ scrollTop: $('.chat-log')[0].scrollHeight }, 1000);
+        $('.input-box').css('height', '45px');
+      }
     }
+    else {
+      if (ev.target.scrollHeight < 200)
+        ev.target.style.height = `${ev.target.scrollHeight}px`;
+    }
+  }
+
+  autoGrow(ev) {
+    this.setState({ message: ev.target.value });
   }
 
   render() {
@@ -95,9 +108,17 @@ class App extends React.Component {
       const chatLog = [];
       for (let i = 0; i < this.state.chatLog.length; i++) {
         if (this.state.chatLog[i].from === this.state.user && this.state.chatLog[i].to === this.state.msgTo) {
-          chatLog.push(<div className="Message-to"><span className="Message-to-box">{this.state.chatLog[i].message}</span></div>);
+          chatLog.push(<div className="Message-to">
+            <span className="Message-to-box">
+              {this.state.chatLog[i].message}
+            </span>
+                       </div>);
         } else if (this.state.chatLog[i].from === this.state.msgTo && this.state.chatLog[i].to === this.state.user) {
-          chatLog.push(<div className="Message-from"><span className="Message-from-box">{this.state.chatLog[i].message}</span></div>);
+          chatLog.push(<div className="Message-from">
+            <span className="Message-from-box">
+              {this.state.chatLog[i].message}
+            </span>
+                       </div>);
         }
       }
 
@@ -129,11 +150,15 @@ class App extends React.Component {
                   {chatLog}
                 </div>
               </div>
-              <div className="row bottom input-group">
-                <input type="text" className="form-control input" palceholder="Enter Message..." value={this.state.message} onChange={ev => this.setState({ message: ev.target.value })} />
-                <div className="input-group-append">
-                  <button className="btn btn-outline-secondary" type="button" onClick={this.sendMessage}>Send</button>
-                </div>
+              <div className="row bottom">
+                <textarea
+                  type="text"
+                  className="form-control input-box"
+                  placeholder="Enter Message..."
+                  value={this.state.message}
+                  onChange={this.autoGrow}
+                  onKeyUp={this.sendMessage}
+                />
               </div>
             </div>
           </div>
