@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import { Button , ButtonGroup , PageHeader, Label, Panel} from 'react-bootstrap';
 
+const wellStyles = {maxWidth: 400, margin: '0 auto 10px'};
+const labelStyles = {textAlign: "center"};
+const footerStyles = {textAlign: "center", fontSize: 15};
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
@@ -15,11 +19,16 @@ class LoginPage extends React.Component {
   render() {
     return (
       <div>
-        <h1>Select User</h1>
-        <button onClick={this.handleOnClick} name="Alice">Alice</button>
-        <button onClick={this.handleOnClick} name="Bob">Bob</button>
-        <button onClick={this.handleOnClick} name="Carol">Carol</button>
-        <button onClick={this.handleOnClick} name="Dave">Dave</button>
+        <div className="well" style={wellStyles}>
+          <h1 style={{textAlign: "center"}}>Select User</h1>
+          <br/>
+          <Button onClick={this.handleOnClick} name="Alice" bsSize="lg" block>Alice</Button>
+          <Button onClick={this.handleOnClick} name="Bob" bsSize="lg" block>Bob</Button>
+          <Button onClick={this.handleOnClick} name="Carol" bsSize="lg" block>Carol</Button>
+          <Button onClick={this.handleOnClick} name="Dave" bsSize="lg" block>Dave</Button>
+          
+        </div>
+        <p style={footerStyles}>Messenger-App</p>
       </div>
       // <button onClick=>Bob</button>
     );

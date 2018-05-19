@@ -22,16 +22,6 @@ class App extends React.Component {
         alert(`new message from ${data.from} received`);
       }
       console.log(data.from);
-
-
-      // if(this.state.chatLog[this.state.chatLog.lenght-1].from !== this.state.msgTo){
-      // alert('New message from '+{this.state.chatLog[this.state.chatLog.lenght-1].from}+'...');
-      // alert('new message')
-      // }
-    };
-    const loadMessageLog = (data) => {
-      console.log('loading chatlog');
-      this.setState({ chatLog: data });
     };
 
     this.socket = io('localhost:5000');
@@ -46,7 +36,6 @@ class App extends React.Component {
         user: data.usr,
         login: true,
       });
-      //loadMessageLog(data);
     });
 
 
