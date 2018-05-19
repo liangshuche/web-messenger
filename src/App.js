@@ -12,16 +12,16 @@ class App extends React.Component {
     this.state = {
       user: '',
       login: false,
-      msgTo: '',
+      msgTo: 'Messenger',
       message: '',
       log: '',
+      newMsg: '',
     };
     const loadMessage = (data) => {
       this.setState({ chatLog: [...this.state.chatLog, data] });
       if (data.from !== this.state.user && data.from !== this.state.msgTo) {
-        alert(`new message from ${data.from} received`);
+        this.setState({ newMsg: [...this.state.newMsg, data.from] });
       }
-      console.log(data.from);
     };
 
     this.socket = io('localhost:5000');
@@ -39,22 +39,9 @@ class App extends React.Component {
     });
 
 
-    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleMsgToChange = this.handleMsgToChange.bind(this);
     this.handleOnClick = this.handleOnClick.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
-    this.loadMessage = this.loadMessage.bind(this);
-  }
-
-
-  handleChange(event) {
-    this.setState({ user: event.target.value });
-  }
-
-
-  handleMsgToChange(event) {
-    this.setState({ msgTo: event.target.value });
   }
 
   handleSubmit(event) {
@@ -66,88 +53,76 @@ class App extends React.Component {
 
   handleOnClick(event) {
     this.setState({ msgTo: event.target.name });
+    if (this.state.newMsg.includes(event.target.name)) {
+      const index = this.state.newMsg.indexOf(event.target.name);
+      if (index !== -1) {
+        this.state.newMsg.splice(index, 1)
+        this.setState({ newMsg: this.state.newMsg});
+      }
+    }
   }
 
   sendMessage(ev) {
     ev.preventDefault();
-    this.socket.emit('SEND_MESSAGE', {
-      from: this.state.user,
-      to: this.state.msgTo,
-      message: this.state.message,
-    });
-    this.setState({ message: '' });
-  }
-
-  loadMessage(data) {
-    this.setState({ chatLog: [...this.state.chatLog, data] });
-
-    if (this.state.chatLog[this.state.chatLog.lenght - 1].from !== this.state.msgTo) {
-      // prompt('New message from '+{chatLog[chatLog.lenght-1].from}+'...');
-      prompt('new message');
+    if (this.message !== '' && this.msgTo !== 'Messenger') {
+      this.socket.emit('SEND_MESSAGE', {
+        from: this.state.user,
+        to: this.state.msgTo,
+        message: this.state.message,
+      });
+      this.setState({ message: '' });
     }
   }
 
-
   render() {
     if (this.state.login === true) {
-      const header = (this.state.msgTo === '')?"Messenger":this.state.msgTo;
       const contactList = [];
       for (let i = 0; i < userList.length; ++i) {
         if (userList[i] !== this.state.user) {
           if (userList[i] === this.state.msgTo) {
-            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-secondary btn-lg btn-block">{userList[i]}</button>,);
+            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-secondary btn-lg btn-contact btn-block">{userList[i]}</button>);
+          } else if (this.state.newMsg.includes(userList[i])) {
+            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-outline-danger btn-lg btn-contact btn-block">{userList[i]}</button>);
           } else {
-            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-outline-secondary btn-lg btn-block">{userList[i]}</button>,);
+            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-outline-secondary btn-lg btn-contact btn-block">{userList[i]}</button>);
           }
         }
       }
       const _log = [];
       for (let i = 0; i < this.state.chatLog.length; i++) {
-        if (this.state.chatLog[i].from === this.state.user && this.state.chatLog[i].to === this.state.msgTo) { _log.push(<div>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</div>); } else if (this.state.chatLog[i].from === this.state.msgTo && this.state.chatLog[i].to === this.state.user) { _log.push(<div>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</div>); }
+        if (this.state.chatLog[i].from === this.state.user && this.state.chatLog[i].to === this.state.msgTo) {
+          _log.push(<p>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</p>);
+        } else if (this.state.chatLog[i].from === this.state.msgTo && this.state.chatLog[i].to === this.state.user) {
+          _log.push(<p>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</p>);
+        }
       }
       return (
         <div className="container">
-          <div id="fixed-height-row" className="row">
-            <div className="col-12">
-              <h1>{header}</h1>
+          <div className="row">
+            <div className="col-4" />
+            <div className="col-8">
+              <h1>{this.state.msgTo}</h1>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-4">
+              <div className="btn-group-vertical btn-block">
+                {contactList}
+              </div>
+            </div>
+            <div className="col-8 main ">
               <div className="row">
-                <div className="col-2">
-                  <div className="btn-group-vertical">
-                    {contactList}
-                  </div>
-                </div>
-                <div className="col-10">
-                  {_log}
+                {_log}
+              </div>
+              <div className="row bottom input-group">
+                <input type="text" className="form-control" palceholder="Enter Message..." value={this.state.message} onChange={ev => this.setState({ message: ev.target.value })} />
+                <div className="input-group-append">
+                  <button className="btn btn-outline-secondary" type="button" onClick={this.sendMessage}>Send</button>
                 </div>
               </div>
-              <input type="text" placeholder="Message" value={this.state.message} onChange={ev => this.setState({ message: ev.target.value })} />
-              <br />
-              <button onClick={this.sendMessage} >Send</button>
-
             </div>
-
           </div>
         </div>
-        /*
-        <div>
-          <form>
-            <select value={this.state.msgTo} onChange={this.handleMsgToChange}>
-              {_list}
-            </select>
-          </form>
-          <p>{this.state.user} sending message to {this.state.msgTo} ...</p>
-          <div className="card-footer">
-            <br />
-            <input type="text" placeholder="Message" value={this.state.message} onChange={ev => this.setState({ message: ev.target.value })} />
-            <br />
-            <button onClick={this.sendMessage} >Send</button>
-            <br />
-          </div>
-          <div className="msg-log">
-            {_log}
-          </div>
-        </div>
-        */
       );
     }
 
