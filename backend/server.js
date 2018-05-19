@@ -13,7 +13,7 @@ const io = socket(server);
 const chatLog = [];
 
 io.on('connection', (socket) => {
-  console.log(socket.id);
+  console.log(`Socket ID: ${socket.id} connected`);
 
 
   socket.on('LOGIN', (name) => {

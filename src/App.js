@@ -12,7 +12,7 @@ class App extends React.Component {
     this.state = {
       user: '',
       login: false,
-      msgTo: 'Alice',
+      msgTo: '',
       message: '',
       log: '',
     };
@@ -42,6 +42,7 @@ class App extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleMsgToChange = this.handleMsgToChange.bind(this);
+    this.handleOnClick = this.handleOnClick.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.loadMessage = this.loadMessage.bind(this);
   }
@@ -63,6 +64,9 @@ class App extends React.Component {
     event.preventDefault();
   }
 
+  handleOnClick(event) {
+    this.setState({ msgTo: event.target.name });
+  }
 
   sendMessage(ev) {
     ev.preventDefault();
@@ -86,10 +90,15 @@ class App extends React.Component {
 
   render() {
     if (this.state.login === true) {
-      const _list = [];
+      const header = (this.state.msgTo === '')?"Messenger":this.state.msgTo;
+      const contactList = [];
       for (let i = 0; i < userList.length; ++i) {
         if (userList[i] !== this.state.user) {
-          _list.push(<option value={userList[i]}>{userList[i]}</option>);
+          if (userList[i] === this.state.msgTo) {
+            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-secondary btn-lg btn-block">{userList[i]}</button>,);
+          } else {
+            contactList.push(<button onClick={this.handleOnClick} name={userList[i]} className="btn btn-outline-secondary btn-lg btn-block">{userList[i]}</button>,);
+          }
         }
       }
       const _log = [];
@@ -97,6 +106,29 @@ class App extends React.Component {
         if (this.state.chatLog[i].from === this.state.user && this.state.chatLog[i].to === this.state.msgTo) { _log.push(<div>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</div>); } else if (this.state.chatLog[i].from === this.state.msgTo && this.state.chatLog[i].to === this.state.user) { _log.push(<div>{this.state.chatLog[i].from}: {this.state.chatLog[i].message}</div>); }
       }
       return (
+        <div className="container">
+          <div id="fixed-height-row" className="row">
+            <div className="col-12">
+              <h1>{header}</h1>
+              <div className="row">
+                <div className="col-2">
+                  <div className="btn-group-vertical">
+                    {contactList}
+                  </div>
+                </div>
+                <div className="col-10">
+                  {_log}
+                </div>
+              </div>
+              <input type="text" placeholder="Message" value={this.state.message} onChange={ev => this.setState({ message: ev.target.value })} />
+              <br />
+              <button onClick={this.sendMessage} >Send</button>
+
+            </div>
+
+          </div>
+        </div>
+        /*
         <div>
           <form>
             <select value={this.state.msgTo} onChange={this.handleMsgToChange}>
@@ -115,6 +147,7 @@ class App extends React.Component {
             {_log}
           </div>
         </div>
+        */
       );
     }
 
