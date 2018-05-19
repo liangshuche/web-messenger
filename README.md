@@ -6,6 +6,7 @@
 <br>
 A Messenger App powered by React and Socket.IO with an Express backend server.
 <br>
+
 ## Usage
 - Install Dependencies
 ```
