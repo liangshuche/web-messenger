@@ -1,9 +1,11 @@
 # Web Programming Homework #4: Messenger App
+
+
+![ALT](https://github.com/liangshuche/web-messenger/blob/master/img/screenshot.png?raw=True)
+
 <br>
 A Messenger App powered by React and Socket.IO with an Express backend server.
-![image](https://github.com/liangshuche/web-messenger/blob/master/img/screenshot.png)
 <br>
-
 ## Usage
 - Install Dependencies
 ```
