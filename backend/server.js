@@ -10,21 +10,22 @@ const server = app.listen(5000, () => {
 
 const io = socket(server);
 
-const chat_log = [];
+const chatLog = [];
 
 io.on('connection', (socket) => {
   console.log(socket.id);
 
 
-  socket.on('LOGIN', () => {
-    console.log('user login');
-    io.emit('RECEIVE_MESSAGE_LOG', chat_log);
-    console.log('sending chatlog');
-    console.log(chat_log);
+  socket.on('LOGIN', (name) => {
+    console.log(`User ${name} login`);
+    socket.emit('MESSAGE_LOG', {
+      log: chatLog,
+      usr: name,
+    });
   });
 
   socket.on('SEND_MESSAGE', (data) => {
-    chat_log.push(data);
+    chatLog.push(data);
     io.emit('RECEIVE_MESSAGE', data);
   });
 });

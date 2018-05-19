@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
 
-const userList = ['Alice', 'Bob', 'Carol'];
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.handleOnClick = this.handleOnClick.bind(this);
 
-    this.socket = io('localhost:5000');
+    this.socket = this.props.socket;//io('localhost:5000');
   }
   handleOnClick(ev) {
-    this.socket.emit('LOGIN', ev);
+    ev.preventDefault();
+    this.socket.emit('LOGIN', ev.target.name);
   }
   render() {
     return (
-      <button onClick={this.handleOnClick('Alice')}>Alice</button>
+      <div>
+        <h1>Select User</h1>
+        <button onClick={this.handleOnClick} name="Alice">Alice</button>
+        <button onClick={this.handleOnClick} name="Bob">Bob</button>
+        <button onClick={this.handleOnClick} name="Carol">Carol</button>
+        <button onClick={this.handleOnClick} name="Dave">Dave</button>
+      </div>
       // <button onClick=>Bob</button>
     );
   }
