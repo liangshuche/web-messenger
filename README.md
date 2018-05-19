@@ -1,7 +1,7 @@
 # Web Programming Homework #4: Messenger App
 <br>
 A Messenger App powered by React and Socket.IO with an Express backend server.
-![Alt Text](https://github.com/liangshuche/web-messenger/blob/master/img/screenshot.png)
+![image](https://github.com/liangshuche/web-messenger/blob/master/img/screenshot.png)
 <br>
 
 ## Usage
